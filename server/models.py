@@ -10,6 +10,10 @@ class EtfBase(SQLModel):
     etf_name: str
     market_price: float
 
+
+class Etf(EtfBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+
     basic_materials_weight: float
     consumer_cyclical_weight: float
     financial_services_weight: float
@@ -23,9 +27,6 @@ class EtfBase(SQLModel):
     technology_weight: float
 
 
-class Etf(EtfBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-
-
 class EtfRead(EtfBase):
     id: int
+    sector_weights: dict[str, float]

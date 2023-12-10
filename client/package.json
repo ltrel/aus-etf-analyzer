@@ -10,9 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@radix-ui/themes": "^2.0.2",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/roboto": "^5.0.8",
+    "@mui/material": "^5.14.20",
+    "@mui/x-charts": "^6.18.3",
+    "camelcase-keys": "^9.1.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "swr": "^2.2.4",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",
