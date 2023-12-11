@@ -14,8 +14,20 @@ const darkTheme = createTheme({
 
 function App() {
   const {data, error, isLoading} = useSWR('etfs/vas', fetchEtf)
-  if(isLoading) return "Loading..."
-  if(error) return "Error!"
+
+  let sectorWeightsPie;
+  if (data) {
+    sectorWeightsPie = <SectorWeightsPie etfData={EtfDataSchema.parse(data)}/>
+  } else if (error) {
+    sectorWeightsPie = <Typography variant="body1">
+      An error occurred whie fetching data.
+    </Typography>
+  } else if (isLoading) {
+    sectorWeightsPie = <Typography variant="body1">
+      Loading...
+    </Typography>
+  }
+  
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -34,7 +46,7 @@ function App() {
             </Typography>
             <Divider />
           </Box>
-          <SectorWeightsPie etfData={EtfDataSchema.parse(data)}/>
+          {sectorWeightsPie}
         </Stack>
       </Container>
     </ThemeProvider>
