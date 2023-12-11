@@ -2,9 +2,6 @@ import { AppBar, CssBaseline, ThemeProvider, Toolbar, Typography, Container, cre
 import SectorWeightsPie from "./SectorWeightsPie"
 import useSWR from "swr"
 import { EtfDataSchema, fetchEtf } from "./data";
-import camelFetch from "./camelFetch";
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const darkTheme = createTheme({
   palette: {
