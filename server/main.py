@@ -35,7 +35,7 @@ app.add_middleware(
 
 @app.get('/etfs/{etf_symbol}', response_model=EtfRead)
 def get_etf_info(*, session: Session = Depends(get_session), etf_symbol: str):
-    etf = session.exec(select(Etf).where(Etf.etf_symbol == etf_symbol)).first()
+    etf = session.exec(select(Etf).where(Etf.etf_symbol == etf_symbol.upper())).first()
     if not etf or etf.date_updated.date() < date.today():
         try:
             etf = scrape_etf_data(etf_symbol)
