@@ -2,6 +2,8 @@ import { AppBar, CssBaseline, ThemeProvider, Toolbar, Typography, Container, cre
 import SectorWeightsPie from "./SectorWeightsPie"
 import useSWR from "swr"
 import { EtfDataSchema, fetchEtf } from "./data";
+import PortfolioCardList from "./PortfolioCardList";
+import { useState } from "react";
 
 const darkTheme = createTheme({
   palette: {
@@ -11,6 +13,22 @@ const darkTheme = createTheme({
 
 function App() {
   const {data, error, isLoading} = useSWR('etfs/vas', fetchEtf)
+  const [assets, setAssets] = useState([
+    {
+      symbol: 'VAS',
+      quantity: 11,
+    },
+    {
+      symbol: 'IHVV',
+      quantity: 3,
+    },
+  ])
+
+  function handleQuantityChange(index: number, newQuantity: number) {
+    const newAssets = [...assets]
+    newAssets[index].quantity = newQuantity
+    setAssets(newAssets)
+  }
 
   let sectorWeightsPie;
   if (data) {
@@ -37,6 +55,7 @@ function App() {
       </AppBar>
       <Container maxWidth='lg'>
         <Stack gap={4} sx={{pt: 4}}>
+          <PortfolioCardList data={assets} onQuantityChange={handleQuantityChange}/>
           <Box>
             <Typography variant="h5">
               VAS - Vanguard Australian Shares Index ETF
