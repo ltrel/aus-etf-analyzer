@@ -5,7 +5,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
 
-from .database import create_db_and_tables, get_session
+from .database import create_db_and_tables, get_session, close_db
 from .models import Etf, EtfRead
 from .scraper import scrape_etf_data
 
@@ -14,6 +14,7 @@ from .scraper import scrape_etf_data
 async def lifespan(app: FastAPI):
     create_db_and_tables()
     yield
+    close_db()
 
 app = FastAPI(lifespan=lifespan)
 
