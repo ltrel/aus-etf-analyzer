@@ -82,14 +82,19 @@ export default function PortfolioCardList({data, onQuantityChange, onDelete, onA
           value={symbolSearchText}
           onChange={(event) => setSymbolSearchText(event.target.value.toUpperCase())}
           onKeyUp={(event) => {
-            if(event.key === "Enter") {
+            if(event.key === "Enter" && symbolSearchText) {
               onAdd(symbolSearchText)
               setSymbolSearchText("")
             }
           }}
           InputProps={{placeholder: "Add ETF by Symbol...", endAdornment: (
             <InputAdornment position="end">
-              <IconButton>
+              <IconButton onClick={() => {
+                if(symbolSearchText) {
+                  onAdd(symbolSearchText)
+                  setSymbolSearchText("")
+                }
+              }}>
                 <Search/>
               </IconButton>
             </InputAdornment>
