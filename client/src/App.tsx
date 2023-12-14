@@ -30,6 +30,14 @@ function App() {
     setAssets(newAssets)
   }
 
+  function handleDelete(index: number) {
+    setAssets((prev) => [...prev.filter((_, i) => i !== index)])
+  }
+
+  function handleAdd(symbol: string) {
+    setAssets([...assets, {symbol: symbol, quantity: 1}])
+  }
+
   let sectorWeightsPie;
   if (data) {
     sectorWeightsPie = <SectorWeightsPie etfData={EtfDataSchema.parse(data)}/>
@@ -55,7 +63,12 @@ function App() {
       </AppBar>
       <Container maxWidth='lg'>
         <Stack gap={4} sx={{pt: 4}}>
-          <PortfolioCardList data={assets} onQuantityChange={handleQuantityChange}/>
+          <PortfolioCardList
+            data={assets}
+            onQuantityChange={handleQuantityChange}
+            onDelete={handleDelete}
+            onAdd={handleAdd}
+          />
           <Box>
             <Typography variant="h5">
               VAS - Vanguard Australian Shares Index ETF
