@@ -2,7 +2,7 @@ import { AppBar, CssBaseline, ThemeProvider, Toolbar, Typography, Container, cre
 import SectorWeightsPie from "./SectorWeightsPie"
 import useSWR from "swr"
 import { EtfDataSchema, fetchEtf } from "./data";
-import PortfolioCardList from "./PortfolioCardList";
+import PortfolioList from "./PortfolioList";
 import { useState } from "react";
 
 const darkTheme = createTheme({
@@ -63,7 +63,7 @@ function App() {
       </AppBar>
       <Container maxWidth='lg'>
         <Stack gap={4} sx={{pt: 4}}>
-          <PortfolioCardList
+          <PortfolioList
             data={assets}
             onQuantityChange={handleQuantityChange}
             onDelete={handleDelete}
