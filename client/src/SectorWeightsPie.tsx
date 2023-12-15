@@ -1,7 +1,7 @@
 import { PieChart } from "@mui/x-charts"
 import { fetchEtf } from "./data"
 import Color from "color"
-import useSWR from "swr"
+import { useQuery } from "react-query"
 
 const baseColor = "#DF5648"
 const palette = new Array(11).fill(0).map((_, i) => {
@@ -12,7 +12,7 @@ interface SectorWeightsPieProps {
   symbol: string
 }
 export default function SectorWeightsPie({symbol}: SectorWeightsPieProps) {
-  const {data, error, isLoading} = useSWR('etfs/'+symbol, fetchEtf)
+  const {data, error, isLoading} = useQuery({queryKey: ['etf', symbol], queryFn: () => fetchEtf(symbol)})
 
   if (isLoading) {
     return "Loading..."

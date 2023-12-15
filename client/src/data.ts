@@ -15,7 +15,7 @@ export const EtfDataSchema = z.object({
 export type EtfData = z.infer<typeof EtfDataSchema>;
 
 export async function fetchEtf(key: string): Promise<EtfData> {
-  const res = await fetch('http://localhost:8000/' + key)
+  const res = await fetch('http://localhost:8000/etfs/' + key)
   const json = await res.json()
   const camelJson = camelcaseKeys(json)
 

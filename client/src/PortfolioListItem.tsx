@@ -2,7 +2,7 @@ import { Typography, Paper, Button, Stack, IconButton, TextField } from "@mui/ma
 import { Delete, PieChart } from "@mui/icons-material"
 import { equalSizedFlexItems } from "./styles"
 import { fetchEtf } from "./data"
-import useSWR from "swr"
+import { useQuery } from "react-query"
 
 const smallButtonStyle = {width: "3ch", minWidth: "3ch", maxWidth: "3ch"}
 export const itemPaperStyle = {padding: 2, display: "flex", justifyContent: "space-between", alignItems: "center"}
@@ -17,7 +17,7 @@ export interface PortfolioListItemProps {
   onGraph(): void
 }
 export default function PortfolioListItem({asset, onQuantityChange, onDelete, onGraph}: PortfolioListItemProps) {
-  const {data, error, isLoading} = useSWR(`etfs/${asset.symbol}`, fetchEtf)
+  const {data, error, isLoading} = useQuery({queryKey: ['etf', asset.symbol], queryFn: () => fetchEtf(asset.symbol)})
 
   function validateQuantityInput(newInput: string) {
     const number = Number(newInput)
