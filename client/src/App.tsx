@@ -1,7 +1,5 @@
 import { AppBar, CssBaseline, ThemeProvider, Toolbar, Typography, Container, createTheme, Divider, Box, Stack } from "@mui/material"
 import SectorWeightsPie from "./SectorWeightsPie"
-import useSWR from "swr"
-import { EtfDataSchema, fetchEtf } from "./data";
 import PortfolioList from "./PortfolioList";
 import { useState } from "react";
 
@@ -12,7 +10,6 @@ const darkTheme = createTheme({
 })
 
 function App() {
-  const {data, error, isLoading} = useSWR('etfs/vas', fetchEtf)
   const [assets, setAssets] = useState([
     {
       symbol: 'VAS',
@@ -22,7 +19,12 @@ function App() {
       symbol: 'IHVV',
       quantity: 3,
     },
+    {
+      symbol: 'NDQ',
+      quantity: 2
+    }
   ])
+  const [graphSymbol, setGraphSymbol] = useState("VAS")
 
   function handleQuantityChange(index: number, newQuantity: number) {
     const newAssets = [...assets]
@@ -36,19 +38,6 @@ function App() {
 
   function handleAdd(symbol: string) {
     setAssets([...assets, {symbol: symbol, quantity: 1}])
-  }
-
-  let sectorWeightsPie;
-  if (data) {
-    sectorWeightsPie = <SectorWeightsPie etfData={EtfDataSchema.parse(data)}/>
-  } else if (error) {
-    sectorWeightsPie = <Typography variant="body1">
-      An error occurred whie fetching data.
-    </Typography>
-  } else if (isLoading) {
-    sectorWeightsPie = <Typography variant="body1">
-      Loading...
-    </Typography>
   }
   
   return (
@@ -68,14 +57,15 @@ function App() {
             onQuantityChange={handleQuantityChange}
             onDelete={handleDelete}
             onAdd={handleAdd}
+            onGraph={(index) => setGraphSymbol(assets[index].symbol)}
           />
           <Box>
             <Typography variant="h5">
-              VAS - Vanguard Australian Shares Index ETF
+              {graphSymbol} 
             </Typography>
             <Divider />
           </Box>
-          {sectorWeightsPie}
+          <SectorWeightsPie symbol={graphSymbol}/>
         </Stack>
       </Container>
     </ThemeProvider>

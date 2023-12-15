@@ -1,18 +1,20 @@
-import { Delete, Search } from "@mui/icons-material";
+import { Delete, Search, PieChart } from "@mui/icons-material";
 import { Paper, Typography, Stack, TextField, IconButton, InputAdornment, Collapse, Box } from "@mui/material";
 import { TransitionGroup } from "react-transition-group";
 import { useState } from "react";
 import PortfolioListItem, {itemPaperStyle} from "./PortfolioListItem";
+import { equalSizedFlexItems } from "./styles";
 
-const equalSizedFlexItems = {flex: "1 1 0", width: 0}
+const phantomButtonStyle = {opacity: 0, height: 0}
 
 export interface PortfolioListProps {
   data: Array<{symbol: string, quantity: number}>
   onQuantityChange(index: number, newQuantity: number): void
   onDelete(index: number): void
   onAdd(symbol: string): void
+  onGraph(index: number): void
 }
-export default function PortfolioList({data, onQuantityChange, onDelete, onAdd} : PortfolioListProps) {
+export default function PortfolioList({data, onQuantityChange, onDelete, onAdd, onGraph} : PortfolioListProps) {
   const [symbolSearchText, setSymbolSearchText] = useState("")
 
   return (
@@ -22,8 +24,11 @@ export default function PortfolioList({data, onQuantityChange, onDelete, onAdd} 
         <Typography sx={[equalSizedFlexItems, {fontWeight: 'bold'}]}>Quantity</Typography>
         <Typography sx={[equalSizedFlexItems, {fontWeight: 'bold'}]}>Unit Price</Typography>
         <Typography sx={[equalSizedFlexItems, {fontWeight: 'bold'}]}>Total Value</Typography>
-        <IconButton sx={{opacity: 0, height: 0}} disabled>
+        <IconButton sx={phantomButtonStyle} disabled>
           <Delete/>
+        </IconButton>
+        <IconButton sx={phantomButtonStyle} disabled>
+          <PieChart/>
         </IconButton>
       </Paper>
       <TransitionGroup component={Box}>
@@ -34,6 +39,7 @@ export default function PortfolioList({data, onQuantityChange, onDelete, onAdd} 
                 asset={asset}
                 onQuantityChange={(newQuantity) => onQuantityChange(index, newQuantity)}
                 onDelete={() => onDelete(index)}
+                onGraph={() => onGraph(index)}
               />
             </Collapse>
           )

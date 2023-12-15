@@ -1,6 +1,8 @@
 import { Typography, Paper, Button, Stack, IconButton, TextField } from "@mui/material"
-import { Delete } from "@mui/icons-material"
+import { Delete, PieChart } from "@mui/icons-material"
 import { equalSizedFlexItems } from "./styles"
+import { fetchEtf } from "./data"
+import useSWR from "swr"
 
 const smallButtonStyle = {width: "3ch", minWidth: "3ch", maxWidth: "3ch"}
 export const itemPaperStyle = {padding: 2, display: "flex", justifyContent: "space-between", alignItems: "center"}
@@ -12,8 +14,11 @@ export interface PortfolioListItemProps {
   }
   onQuantityChange(newQuantity: number): void
   onDelete(): void
+  onGraph(): void
 }
-export default function PortfolioListItem({asset, onQuantityChange, onDelete}: PortfolioListItemProps) {
+export default function PortfolioListItem({asset, onQuantityChange, onDelete, onGraph}: PortfolioListItemProps) {
+  const {data, error, isLoading} = useSWR(`etfs/${asset.symbol}`, fetchEtf)
+
   function validateQuantityInput(newInput: string) {
     const number = Number(newInput)
     if(!isNaN(number) && Number.isInteger(number) && number >= 0) {
@@ -23,6 +28,18 @@ export default function PortfolioListItem({asset, onQuantityChange, onDelete}: P
 
   function incrementQuantity(amount: number) {
     onQuantityChange(Math.max(asset.quantity + amount, 1))
+  }
+
+  let unitPriceText
+  let totalValueText
+  if(data) {
+    unitPriceText = "$" + data.marketPrice 
+    totalValueText = "$" + data.marketPrice * asset.quantity
+  } else if (isLoading) {
+    unitPriceText = "Loading..."
+    totalValueText = "Loading..."
+  } else if (error) {
+    onDelete()
   }
 
   return (
@@ -50,8 +67,11 @@ export default function PortfolioListItem({asset, onQuantityChange, onDelete}: P
           +
         </Button>
       </Stack>
-      <Typography sx={equalSizedFlexItems}>$37.21 (PLACEHOLDER)</Typography>
-      <Typography sx={equalSizedFlexItems}>${asset.quantity*37.21}</Typography>
+      <Typography sx={equalSizedFlexItems}>{unitPriceText}</Typography>
+      <Typography sx={equalSizedFlexItems}>{unitPriceText}</Typography>
+      <IconButton onClick={() => onGraph()}>
+        <PieChart/>
+      </IconButton>
       <IconButton onClick={() => onDelete()}>
         <Delete/>
       </IconButton>

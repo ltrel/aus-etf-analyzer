@@ -1,6 +1,7 @@
 import { PieChart } from "@mui/x-charts"
-import { EtfData } from "./data"
+import { fetchEtf } from "./data"
 import Color from "color"
+import useSWR from "swr"
 
 const baseColor = "#DF5648"
 const palette = new Array(11).fill(0).map((_, i) => {
@@ -8,10 +9,20 @@ const palette = new Array(11).fill(0).map((_, i) => {
 })
 
 interface SectorWeightsPieProps {
-  etfData: EtfData
+  symbol: string
 }
-export default function SectorWeightsPie({etfData}: SectorWeightsPieProps) {
-  const chartData = Object.entries(etfData.sectorWeights).map(([sectorName, weight], index) => {
+export default function SectorWeightsPie({symbol}: SectorWeightsPieProps) {
+  const {data, error, isLoading} = useSWR('etfs/'+symbol, fetchEtf)
+
+  if (isLoading) {
+    return "Loading..."
+  } else if (error) {
+    return "Error."
+  } else if (!data) {
+    return
+  }
+
+  const chartData = Object.entries(data.sectorWeights).map(([sectorName, weight], index) => {
     return {
       id: index,
       label: sectorName,
