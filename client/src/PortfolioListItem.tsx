@@ -68,7 +68,7 @@ export default function PortfolioListItem({asset, onQuantityChange, onDelete, on
         </Button>
       </Stack>
       <Typography sx={equalSizedFlexItems}>{unitPriceText}</Typography>
-      <Typography sx={equalSizedFlexItems}>{unitPriceText}</Typography>
+      <Typography sx={equalSizedFlexItems}>{totalValueText}</Typography>
       <IconButton onClick={() => onGraph()}>
         <PieChart/>
       </IconButton>
