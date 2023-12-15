@@ -39,10 +39,16 @@ def get_etf_info(*, session: Session = Depends(get_session), etf_symbol: str):
     etf = session.exec(select(Etf).where(Etf.etf_symbol == etf_symbol.upper())).first()
     if not etf or etf.date_updated.date() < date.today():
         try:
-            etf = scrape_etf_data(etf_symbol)
+            newEtf = scrape_etf_data(etf_symbol)
         except:
             raise HTTPException(
                 status_code=404, detail='Data scraping failed for the requested ETF')
+        if etf:
+            for key, value in newEtf.model_dump(exclude_unset=True).items():
+                setattr(etf, key, value)
+        else:
+            etf = newEtf
+        
         session.add(etf)
         session.commit()
         session.refresh(etf)
