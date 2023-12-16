@@ -41,7 +41,7 @@ app.add_middleware(
 
 
 @app.get('/etfs/{etf_symbol}', response_model=EtfRead)
-async def get_etf_info(*, session: Session = Depends(get_session), http_session: ClientSession = Depends(HttpSession.get_session), etf_symbol: str):
+async def get_etf_info(*, session: Session = Depends(get_session), etf_symbol: str):
     # Has scraping this symbol failed in the past
     historic_fail = session.exec(select(FailedRequest).where(
         FailedRequest.etf_symbol == etf_symbol.upper())).first()
@@ -53,7 +53,7 @@ async def get_etf_info(*, session: Session = Depends(get_session), http_session:
         Etf.etf_symbol == etf_symbol.upper())).first()
     if not etf or etf.date_updated.date() < date.today():
         try:
-            newEtf = await scrape_etf_data(etf_symbol, http_session)
+            newEtf = await scrape_etf_data(etf_symbol)
         except:
             fail = FailedRequest(date_attempted=datetime.now(),
                                  etf_symbol=etf_symbol.upper())

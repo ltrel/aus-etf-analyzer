@@ -4,6 +4,7 @@ from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
 from .models import Etf
+from .httpsession import HttpSession
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
@@ -14,12 +15,12 @@ HEADERS = {
 }
 
 
-async def scrape_etf_data(symbol, http_session: ClientSession):
+async def scrape_etf_data(symbol):
     symbol = symbol.upper()
 
     url = f'https://finance.yahoo.com/quote/{symbol}.AX/holdings?p={symbol}.AX'
 
-    async with http_session.get(url, headers=HEADERS) as res:
+    async with HttpSession.limited_get(url, headers=HEADERS) as res:
         content = await res.read()
 
         soup = BeautifulSoup(content, 'html.parser')
