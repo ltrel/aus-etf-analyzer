@@ -5,14 +5,15 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const millisecondsInHour = 60 * 60 * 1000
 
 const queryClient = new QueryClient({defaultOptions: {
   queries: {
     staleTime: millisecondsInHour, 
-    cacheTime: millisecondsInHour
+    gcTime: millisecondsInHour,
+    retry: false,
   }
 }})
 

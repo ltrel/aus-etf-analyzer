@@ -2,15 +2,14 @@ import { Delete, Search, PieChart } from "@mui/icons-material";
 import { Paper, Typography, Stack, TextField, IconButton, InputAdornment, Collapse, Box } from "@mui/material";
 import { TransitionGroup } from "react-transition-group";
 import { useState } from "react";
-import PortfolioListItem, {itemPaperStyle} from "./PortfolioListItem";
-import { equalSizedFlexItems } from "./styles";
-
-const phantomButtonStyle = {opacity: 0, height: 0}
+import PortfolioListItem from "./PortfolioListItem";
+import { equalSizedFlexItems, itemPaperStyle, phantomButtonStyle } from "./styles";
+import PortfolioSummary from "./PortfolioSummary";
 
 export interface PortfolioListProps {
   data: Array<{symbol: string, quantity: number}>
   onQuantityChange(index: number, newQuantity: number): void
-  onDelete(index: number): void
+  onDelete(symbol: string): void
   onAdd(symbol: string): void
   onGraph(index: number): void
 }
@@ -38,7 +37,7 @@ export default function PortfolioList({data, onQuantityChange, onDelete, onAdd, 
               <PortfolioListItem
                 asset={asset}
                 onQuantityChange={(newQuantity) => onQuantityChange(index, newQuantity)}
-                onDelete={() => onDelete(index)}
+                onDelete={() => onDelete(asset.symbol)}
                 onGraph={() => onGraph(index)}
               />
             </Collapse>
@@ -70,6 +69,7 @@ export default function PortfolioList({data, onQuantityChange, onDelete, onAdd, 
           )}}
         />
       </Paper>
+      <PortfolioSummary data={data}/>
     </Stack>
   )
 }

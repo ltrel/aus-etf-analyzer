@@ -1,7 +1,7 @@
 import { PieChart } from "@mui/x-charts"
 import { fetchEtf } from "./data"
 import Color from "color"
-import { useQuery } from "react-query"
+import { useQuery } from "@tanstack/react-query"
 
 const baseColor = "#DF5648"
 const palette = new Array(11).fill(0).map((_, i) => {

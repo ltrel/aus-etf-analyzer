@@ -1,4 +1,4 @@
-import { AppBar, CssBaseline, ThemeProvider, Toolbar, Typography, Container, createTheme, Divider, Box, Stack } from "@mui/material"
+import { AppBar, CssBaseline, ThemeProvider, Toolbar, Typography, Container, createTheme, Divider, Stack } from "@mui/material"
 import SectorWeightsPie from "./SectorWeightsPie"
 import PortfolioList from "./PortfolioList";
 import { useState } from "react";
@@ -32,8 +32,8 @@ function App() {
     setAssets(newAssets)
   }
 
-  function handleDelete(index: number) {
-    setAssets((prev) => [...prev.filter((_, i) => i !== index)])
+  function handleDelete(symbol: string) {
+    setAssets((prev) => [...prev.filter(x => x.symbol !== symbol)])
   }
 
   function handleAdd(symbol: string) {
@@ -51,7 +51,13 @@ function App() {
         </Toolbar>
       </AppBar>
       <Container maxWidth='lg'>
-        <Stack gap={4} sx={{pt: 4}}>
+        <Stack gap={3} sx={{pt: 4}}>
+          <Stack gap={1}>
+            <Typography variant="h5">
+              Portfolio Composition
+            </Typography>
+            <Divider />
+          </Stack>
           <PortfolioList
             data={assets}
             onQuantityChange={handleQuantityChange}
@@ -59,12 +65,12 @@ function App() {
             onAdd={handleAdd}
             onGraph={(index) => setGraphSymbol(assets[index].symbol)}
           />
-          <Box>
+          <Stack gap={1}>
             <Typography variant="h5">
               {graphSymbol} 
             </Typography>
             <Divider />
-          </Box>
+          </Stack>
           <SectorWeightsPie symbol={graphSymbol}/>
         </Stack>
       </Container>

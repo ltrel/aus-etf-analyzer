@@ -1,11 +1,9 @@
 import { Typography, Paper, Button, Stack, IconButton, TextField } from "@mui/material"
 import { Delete, PieChart } from "@mui/icons-material"
-import { equalSizedFlexItems } from "./styles"
+import { equalSizedFlexItems, itemPaperStyle, smallButtonStyle } from "./styles"
 import { fetchEtf } from "./data"
-import { useQuery } from "react-query"
-
-const smallButtonStyle = {width: "3ch", minWidth: "3ch", maxWidth: "3ch"}
-export const itemPaperStyle = {padding: 2, display: "flex", justifyContent: "space-between", alignItems: "center"}
+import { useQuery } from "@tanstack/react-query"
+import { useEffect } from "react"
 
 export interface PortfolioListItemProps {
   asset: {
@@ -17,7 +15,10 @@ export interface PortfolioListItemProps {
   onGraph(): void
 }
 export default function PortfolioListItem({asset, onQuantityChange, onDelete, onGraph}: PortfolioListItemProps) {
-  const {data, error, isLoading} = useQuery({queryKey: ['etf', asset.symbol], queryFn: () => fetchEtf(asset.symbol)})
+  const {data, error, isLoading, status} = useQuery({queryKey: ['etf', asset.symbol], queryFn: () => fetchEtf(asset.symbol)})
+  useEffect(() => {
+    if (status === 'error') onDelete()
+  }, [status, onDelete])
 
   function validateQuantityInput(newInput: string) {
     const number = Number(newInput)
@@ -39,7 +40,8 @@ export default function PortfolioListItem({asset, onQuantityChange, onDelete, on
     unitPriceText = "Loading..."
     totalValueText = "Loading..."
   } else if (error) {
-    onDelete()
+    unitPriceText = "Error."
+    totalValueText= "Error."
   }
 
   return (
