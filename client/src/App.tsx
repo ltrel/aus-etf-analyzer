@@ -2,9 +2,9 @@ import {
   AppBar, CssBaseline, ThemeProvider, Toolbar, Typography, Container, createTheme, Divider, Stack,
 } from '@mui/material';
 import { useState, useRef, useEffect } from 'react';
+import localforage from 'localforage';
 import SectorWeightsPie from './SectorWeightsPie';
 import PortfolioList from './PortfolioList';
-import localforage from 'localforage';
 import { Assets, AssetsSchema } from './data';
 
 const darkTheme = createTheme({
@@ -38,11 +38,11 @@ function App() {
       const results = AssetsSchema.safeParse(value);
       if (results.success) setAssets(results.data);
       else setAssets(initialAssets);
-    })
-  }, [])
+    });
+  }, []);
   useEffect(() => {
-    localforage.setItem('assets', assets)
-  }, [assets])
+    localforage.setItem('assets', assets);
+  }, [assets]);
 
   function handleQuantityChange(index: number, newQuantity: number) {
     setAssets((prev) => {

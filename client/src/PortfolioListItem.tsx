@@ -4,6 +4,7 @@ import {
 import { Delete, PieChart } from '@mui/icons-material';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import { useSnackbar } from 'notistack';
 import { equalSizedFlexItems, itemPaperStyle, smallButtonStyle } from './styles';
 import { fetchEtf } from './data';
 
@@ -19,12 +20,16 @@ export interface PortfolioListItemProps {
 export default function PortfolioListItem({
   asset, onQuantityChange, onDelete, onGraph,
 }: PortfolioListItemProps) {
+  const { enqueueSnackbar } = useSnackbar();
   const {
     data, error, isLoading, status,
   } = useQuery({ queryKey: ['etf', asset.symbol], queryFn: () => fetchEtf(asset.symbol) });
   useEffect(() => {
-    if (status === 'error') onDelete();
-  }, [status, onDelete]);
+    if (status === 'error') {
+      enqueueSnackbar({ variant: 'error', message: `Failed to fetch data for ${asset.symbol}.` });
+      onDelete();
+    }
+  }, [status, asset.symbol, onDelete, enqueueSnackbar]);
 
   function validateQuantityInput(newInput: string) {
     const number = Number(newInput);
@@ -34,6 +39,9 @@ export default function PortfolioListItem({
   }
 
   function incrementQuantity(amount: number) {
+    if (asset.quantity + amount < 1) {
+      enqueueSnackbar({ variant: 'error', message: 'Each symbol must have at least one unit.' });
+    }
     onQuantityChange(Math.max(asset.quantity + amount, 1));
   }
 
@@ -60,7 +68,7 @@ export default function PortfolioListItem({
           value={asset.quantity}
           inputProps={{ style: { textAlign: 'center' } }}
           onChange={(event) => validateQuantityInput(event.target.value)}
-          onBlur={() => onQuantityChange(1)}
+          onBlur={() => onQuantityChange(Math.max(asset.quantity, 1))}
         />
         <Button
           sx={smallButtonStyle}
