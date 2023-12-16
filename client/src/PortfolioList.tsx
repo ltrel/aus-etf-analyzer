@@ -4,6 +4,7 @@ import {
 } from '@mui/material';
 import { TransitionGroup } from 'react-transition-group';
 import { useState } from 'react';
+import { useSnackbar } from 'notistack';
 import PortfolioListItem from './PortfolioListItem';
 import { equalSizedFlexItems, itemPaperStyle, phantomButtonStyle } from './styles';
 import PortfolioSummary from './PortfolioSummary';
@@ -18,7 +19,17 @@ export interface PortfolioListProps {
 export default function PortfolioList({
   data, onQuantityChange, onDelete, onAdd, onGraph,
 } : PortfolioListProps) {
+  const { enqueueSnackbar } = useSnackbar();
   const [symbolSearchText, setSymbolSearchText] = useState('');
+
+  function handleAdd(symbol: string) {
+    if (data.some((x) => x.symbol === symbol)) {
+      enqueueSnackbar({ variant: 'error', message: 'Symbol already exists in portfolio.' });
+    } else {
+      onAdd(symbol);
+    }
+    setSymbolSearchText('');
+  }
 
   return (
     <Stack gap={2}>
@@ -53,8 +64,7 @@ export default function PortfolioList({
           onChange={(event) => setSymbolSearchText(event.target.value.toUpperCase())}
           onKeyUp={(event) => {
             if (event.key === 'Enter' && symbolSearchText) {
-              onAdd(symbolSearchText);
-              setSymbolSearchText('');
+              handleAdd(symbolSearchText);
             }
           }}
           InputProps={{
@@ -63,8 +73,7 @@ export default function PortfolioList({
               <InputAdornment position="end">
                 <IconButton onClick={() => {
                   if (symbolSearchText) {
-                    onAdd(symbolSearchText);
-                    setSymbolSearchText('');
+                    handleAdd(symbolSearchText);
                   }
                 }}
                 >
