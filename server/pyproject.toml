@@ -7,10 +7,10 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-requests = "^2.31.0"
 beautifulsoup4 = "^4.12.2"
 fastapi = {extras = ["all"], version = "^0.104.1"}
 sqlmodel = "^0.0.14"
+aiohttp = "^3.9.1"
 
 
 [build-system]

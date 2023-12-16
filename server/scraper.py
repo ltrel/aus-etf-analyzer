@@ -1,6 +1,6 @@
 from datetime import datetime
 
-import requests
+from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
 from .models import Etf
@@ -14,34 +14,36 @@ HEADERS = {
 }
 
 
-def scrape_etf_data(symbol):
+async def scrape_etf_data(symbol, http_session: ClientSession):
     symbol = symbol.upper()
 
     url = f'https://finance.yahoo.com/quote/{symbol}.AX/holdings?p={symbol}.AX'
-    page = requests.get(url, headers=HEADERS)
 
-    soup = BeautifulSoup(page.content, 'html.parser')
+    async with http_session.get(url, headers=HEADERS) as res:
+        content = await res.read()
 
-    quote_header = soup.find(id='quote-header-info')
-    etf_name = quote_header.select_one(
-        'div>div>div>h1').text.split('(')[0][:-1]
-    market_price = float(quote_header.select_one('fin-streamer').text)
+        soup = BeautifulSoup(content, 'html.parser')
 
-    holdings_root = soup.find(id='Col1-0-Holdings-Proxy')
-    sector_weight_rows = list(holdings_root.select('h3~div')[1].children)[1:]
+        quote_header = soup.find(id='quote-header-info')
+        etf_name = quote_header.select_one(
+            'div>div>div>h1').text.split('(')[0][:-1]
+        market_price = float(quote_header.select_one('fin-streamer').text)
 
-    weights_dict = {}
-    for row in sector_weight_rows:
-        sector_name = row.select_one(
-            'span>span>span').text.lower().replace(' ', '_') + '_weight'
-        sector_weight = float(row.select_one(':nth-child(3)').text.strip('%'))
-        weights_dict[sector_name] = sector_weight
+        holdings_root = soup.find(id='Col1-0-Holdings-Proxy')
+        sector_weight_rows = list(holdings_root.select('h3~div')[1].children)[1:]
 
-    etf_data = Etf(
-        date_updated=datetime.now(),
-        etf_symbol=symbol,
-        etf_name=etf_name,
-        market_price=market_price,
-        **weights_dict
-    )
-    return etf_data
+        weights_dict = {}
+        for row in sector_weight_rows:
+            sector_name = row.select_one(
+                'span>span>span').text.lower().replace(' ', '_') + '_weight'
+            sector_weight = float(row.select_one(':nth-child(3)').text.strip('%'))
+            weights_dict[sector_name] = sector_weight
+
+        etf_data = Etf(
+            date_updated=datetime.now(),
+            etf_symbol=symbol,
+            etf_name=etf_name,
+            market_price=market_price,
+            **weights_dict
+        )
+        return etf_data
