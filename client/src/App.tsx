@@ -32,9 +32,11 @@ function App() {
   const graphRef = useRef<HTMLDivElement>(null);
 
   function handleQuantityChange(index: number, newQuantity: number) {
-    const newAssets = [...assets];
-    newAssets[index].quantity = newQuantity;
-    setAssets(newAssets);
+    setAssets(prev => {
+      const newAssets = [...prev];
+      newAssets[index].quantity = newQuantity;
+      return newAssets
+    });
   }
 
   function handleDelete(symbol: string) {
@@ -42,7 +44,7 @@ function App() {
   }
 
   function handleAdd(symbol: string) {
-    setAssets([...assets, { symbol, quantity: 1 }]);
+    setAssets(prev => [...prev, { symbol, quantity: 1 }]);
   }
 
   function changeGraph(index: number) {
