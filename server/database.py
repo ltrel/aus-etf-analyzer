@@ -15,5 +15,6 @@ def get_session():
     with Session(engine) as session:
         yield session
 
+
 def close_db():
     engine.dispose()

@@ -31,13 +31,15 @@ async def scrape_etf_data(symbol):
         market_price = float(quote_header.select_one('fin-streamer').text)
 
         holdings_root = soup.find(id='Col1-0-Holdings-Proxy')
-        sector_weight_rows = list(holdings_root.select('h3~div')[1].children)[1:]
+        sector_weight_rows = list(
+            holdings_root.select('h3~div')[1].children)[1:]
 
         weights_dict = {}
         for row in sector_weight_rows:
             sector_name = row.select_one(
                 'span>span>span').text.lower().replace(' ', '_') + '_weight'
-            sector_weight = float(row.select_one(':nth-child(3)').text.strip('%'))
+            sector_weight = float(row.select_one(
+                ':nth-child(3)').text.strip('%'))
             weights_dict[sector_name] = sector_weight
 
         etf_data = Etf(

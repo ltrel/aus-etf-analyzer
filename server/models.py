@@ -31,6 +31,7 @@ class EtfRead(EtfBase):
     id: int
     sector_weights: dict[str, float]
 
+
 class FailedRequest(SQLModel, table=True):
     date_attempted: datetime
     etf_symbol: str

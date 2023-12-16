@@ -6,6 +6,7 @@ from aiolimiter import AsyncLimiter
 
 _limiter = AsyncLimiter(1, 1)
 
+
 class HttpSession():
     _session: Optional[aiohttp.ClientSession] = None
 
@@ -13,15 +14,15 @@ class HttpSession():
     def get_session(cls):
         if cls._session == None:
             cls._session = aiohttp.ClientSession()
-        
+
         return cls._session
-    
+
     @classmethod
     async def close_session(cls):
         if cls._session:
             await cls._session.close()
             cls._session = None
-    
+
     @classmethod
     @asynccontextmanager
     async def limited_get(cls, url, **kwargs):
