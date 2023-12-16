@@ -1,7 +1,7 @@
 import { AppBar, CssBaseline, ThemeProvider, Toolbar, Typography, Container, createTheme, Divider, Stack } from "@mui/material"
 import SectorWeightsPie from "./SectorWeightsPie"
 import PortfolioList from "./PortfolioList";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const darkTheme = createTheme({
   palette: {
@@ -27,6 +27,7 @@ const initialAssets = [
 function App() {
   const [assets, setAssets] = useState(initialAssets)
   const [graphIndex, setGraphIndex] = useState(-1)
+  const graphRef = useRef<HTMLDivElement>(null)
 
   function handleQuantityChange(index: number, newQuantity: number) {
     const newAssets = [...assets]
@@ -40,6 +41,11 @@ function App() {
 
   function handleAdd(symbol: string) {
     setAssets([...assets, {symbol: symbol, quantity: 1}])
+  }
+
+  function changeGraph(index: number) {
+    setGraphIndex(index)
+    graphRef.current?.scrollIntoView({behavior: 'smooth'})
   }
 
   let graphData
@@ -59,7 +65,7 @@ function App() {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Container maxWidth='lg'>
+      <Container maxWidth='lg' sx={{paddingBottom: 4}}>
         <Stack gap={3} sx={{pt: 4}}>
           <Stack gap={1}>
             <Typography variant="h5">
@@ -72,7 +78,7 @@ function App() {
             onQuantityChange={handleQuantityChange}
             onDelete={handleDelete}
             onAdd={handleAdd}
-            onGraph={setGraphIndex}
+            onGraph={changeGraph}
           />
           <Stack gap={1}>
             <Typography variant="h5">
@@ -80,7 +86,9 @@ function App() {
             </Typography>
             <Divider />
           </Stack>
-          <SectorWeightsPie assets={graphData}/>
+          <div ref={graphRef}>
+            <SectorWeightsPie assets={graphData}/>
+          </div>
         </Stack>
       </Container>
     </ThemeProvider>

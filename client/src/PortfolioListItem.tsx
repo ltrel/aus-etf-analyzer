@@ -35,7 +35,7 @@ export default function PortfolioListItem({asset, onQuantityChange, onDelete, on
   let totalValueText
   if(data) {
     unitPriceText = "$" + data.marketPrice 
-    totalValueText = "$" + data.marketPrice * asset.quantity
+    totalValueText = "$" + (data.marketPrice * asset.quantity).toFixed(2)
   } else if (isLoading) {
     unitPriceText = "Loading..."
     totalValueText = "Loading..."

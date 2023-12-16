@@ -29,7 +29,7 @@ export default function PortfolioSummary({data, onGraph}: PortfolioSummaryProps)
   let totalValue
   if (sum === 'error') totalValue = "Error."
   else if (sum === 'loading') totalValue = "Loading..."
-  else totalValue = `$${sum}`
+  else totalValue = `$${sum.toFixed(2)}`
 
   return (
     <Paper sx={itemPaperStyle}>
