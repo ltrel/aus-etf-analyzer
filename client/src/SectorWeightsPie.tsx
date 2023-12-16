@@ -1,47 +1,46 @@
-import { PieChart } from "@mui/x-charts"
-import { Portfolio, fetchEtf, portfolioSectorWeights } from "./data"
-import { allOrNothing } from "./util"
-import Color from "color"
-import { useQueries } from "@tanstack/react-query"
+import { PieChart } from '@mui/x-charts';
+import Color from 'color';
+import { useQueries } from '@tanstack/react-query';
+import { Portfolio, fetchEtf, portfolioSectorWeights } from './data';
+import { allOrNothing } from './util';
 
-const baseColor = "#DF5648"
-const palette = new Array(11).fill(0).map((_, i) => {
-  return Color(baseColor).rotate(360 / 11 * i).hex()
-})
+const baseColor = '#DF5648';
+const colorCount = 11;
+const palette = new Array(colorCount).fill(0).map((_, i) => Color(baseColor).rotate((360 / colorCount) * i).hex());
 
 interface SectorWeightsPieProps {
-  assets: Array<{symbol: string, quantity: number}>
+  assets: Array<{ symbol: string, quantity: number }>
 }
-export default function SectorWeightsPie({assets}: SectorWeightsPieProps) {
-  const queries = assets.map((asset) => {
-    return { queryKey: ['etf', asset.symbol], queryFn: () => fetchEtf(asset.symbol)}
-  })
-  const {data, isPending, error} = useQueries({queries: queries, combine: (results) => {
-    return {
-      data: allOrNothing(results.map(x => x.data)),
-      isPending: results.some(x => x.isPending),
-      error: results.some(x => x.error),
-    }
-  }})
-  if (assets.length === 0) return "No data."
+export default function SectorWeightsPie({ assets }: SectorWeightsPieProps) {
+  const queries = assets.map((asset) => ({ queryKey: ['etf', asset.symbol], queryFn: () => fetchEtf(asset.symbol) }));
+  const { data, isPending, error } = useQueries({
+    queries,
+    combine: (results) => ({
+      data: allOrNothing(results.map((x) => x.data)),
+      isPending: results.some((x) => x.isPending),
+      error: results.some((x) => x.error),
+    }),
+  });
+  if (assets.length === 0) return 'No data.';
 
   if (isPending) {
-    return "Loading..."
-  } else if (error) {
-    return "Error."
-  } else if (!data) {
-    return
+    return 'Loading...';
+  } if (error) {
+    return 'Error.';
+  } if (!data) {
+    return 'Error.';
   }
 
-  const portfolio: Portfolio = data.map((asset, index) => ({etf: asset, quantity: assets[index].quantity}))
-  const portfolioWeights = portfolioSectorWeights(portfolio)
-  const chartData = Object.entries(portfolioWeights).map(([sectorName, weight], index) => {
-    return {
-      id: index,
-      label: sectorName,
-      value: weight,
-    }
-  })
+  const portfolio: Portfolio = data.map((asset, index) => ({
+    etf: asset,
+    quantity: assets[index].quantity,
+  }));
+  const portfolioWeights = portfolioSectorWeights(portfolio);
+  const chartData = Object.entries(portfolioWeights).map(([sectorName, weight], index) => ({
+    id: index,
+    label: sectorName,
+    value: weight,
+  }));
 
   return (
     <PieChart
@@ -52,9 +51,9 @@ export default function SectorWeightsPie({assets}: SectorWeightsPieProps) {
           data: chartData,
           valueFormatter: (x) => `${x.value.toFixed(2)}%`,
           arcLabelMinAngle: 21,
-        }
+        },
       ]}
       height={400}
     />
-  )
+  );
 }

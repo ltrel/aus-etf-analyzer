@@ -1,9 +1,11 @@
-import { Typography, Paper, Button, Stack, IconButton, TextField } from "@mui/material"
-import { Delete, PieChart } from "@mui/icons-material"
-import { equalSizedFlexItems, itemPaperStyle, smallButtonStyle } from "./styles"
-import { fetchEtf } from "./data"
-import { useQuery } from "@tanstack/react-query"
-import { useEffect } from "react"
+import {
+  Typography, Paper, Button, Stack, IconButton, TextField,
+} from '@mui/material';
+import { Delete, PieChart } from '@mui/icons-material';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { equalSizedFlexItems, itemPaperStyle, smallButtonStyle } from './styles';
+import { fetchEtf } from './data';
 
 export interface PortfolioListItemProps {
   asset: {
@@ -14,45 +16,49 @@ export interface PortfolioListItemProps {
   onDelete(): void
   onGraph(): void
 }
-export default function PortfolioListItem({asset, onQuantityChange, onDelete, onGraph}: PortfolioListItemProps) {
-  const {data, error, isLoading, status} = useQuery({queryKey: ['etf', asset.symbol], queryFn: () => fetchEtf(asset.symbol)})
+export default function PortfolioListItem({
+  asset, onQuantityChange, onDelete, onGraph,
+}: PortfolioListItemProps) {
+  const {
+    data, error, isLoading, status,
+  } = useQuery({ queryKey: ['etf', asset.symbol], queryFn: () => fetchEtf(asset.symbol) });
   useEffect(() => {
-    if (status === 'error') onDelete()
-  }, [status, onDelete])
+    if (status === 'error') onDelete();
+  }, [status, onDelete]);
 
   function validateQuantityInput(newInput: string) {
-    const number = Number(newInput)
-    if(!isNaN(number) && Number.isInteger(number) && number >= 0) {
-      onQuantityChange(number) 
+    const number = Number(newInput);
+    if (!Number.isNaN(number) && Number.isInteger(number) && number >= 0) {
+      onQuantityChange(number);
     }
   }
 
   function incrementQuantity(amount: number) {
-    onQuantityChange(Math.max(asset.quantity + amount, 1))
+    onQuantityChange(Math.max(asset.quantity + amount, 1));
   }
 
-  let unitPriceText
-  let totalValueText
-  if(data) {
-    unitPriceText = "$" + data.marketPrice 
-    totalValueText = "$" + (data.marketPrice * asset.quantity).toFixed(2)
+  let unitPriceText;
+  let totalValueText;
+  if (data) {
+    unitPriceText = `$${data.marketPrice}`;
+    totalValueText = `$${(data.marketPrice * asset.quantity).toFixed(2)}`;
   } else if (isLoading) {
-    unitPriceText = "Loading..."
-    totalValueText = "Loading..."
+    unitPriceText = 'Loading...';
+    totalValueText = 'Loading...';
   } else if (error) {
-    unitPriceText = "Error."
-    totalValueText= "Error."
+    unitPriceText = 'Error.';
+    totalValueText = 'Error.';
   }
 
   return (
-    <Paper sx={[itemPaperStyle, {marginBottom: 2}]}>
+    <Paper sx={[itemPaperStyle, { marginBottom: 2 }]}>
       <Typography sx={equalSizedFlexItems}>{asset.symbol}</Typography>
-      <Stack direction="row" gap={1} sx={[equalSizedFlexItems, {alignItems: "center"}]}>
+      <Stack direction="row" gap={1} sx={[equalSizedFlexItems, { alignItems: 'center' }]}>
         <TextField
           variant="standard"
-          sx={{width: "6ch"}}
+          sx={{ width: '6ch' }}
           value={asset.quantity}
-          inputProps={{style: {textAlign: "center"}}}
+          inputProps={{ style: { textAlign: 'center' } }}
           onChange={(event) => validateQuantityInput(event.target.value)}
           onBlur={() => onQuantityChange(1)}
         />
@@ -72,11 +78,11 @@ export default function PortfolioListItem({asset, onQuantityChange, onDelete, on
       <Typography sx={equalSizedFlexItems}>{unitPriceText}</Typography>
       <Typography sx={equalSizedFlexItems}>{totalValueText}</Typography>
       <IconButton onClick={() => onGraph()}>
-        <PieChart/>
+        <PieChart />
       </IconButton>
       <IconButton onClick={() => onDelete()}>
-        <Delete/>
+        <Delete />
       </IconButton>
     </Paper>
-  )
+  );
 }

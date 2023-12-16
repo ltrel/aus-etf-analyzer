@@ -1,13 +1,15 @@
-import { AppBar, CssBaseline, ThemeProvider, Toolbar, Typography, Container, createTheme, Divider, Stack } from "@mui/material"
-import SectorWeightsPie from "./SectorWeightsPie"
-import PortfolioList from "./PortfolioList";
-import { useState, useRef } from "react";
+import {
+  AppBar, CssBaseline, ThemeProvider, Toolbar, Typography, Container, createTheme, Divider, Stack,
+} from '@mui/material';
+import { useState, useRef } from 'react';
+import SectorWeightsPie from './SectorWeightsPie';
+import PortfolioList from './PortfolioList';
 
 const darkTheme = createTheme({
   palette: {
-    mode: 'dark'
-  }
-})
+    mode: 'dark',
+  },
+});
 
 const initialAssets = [
   {
@@ -20,41 +22,41 @@ const initialAssets = [
   },
   {
     symbol: 'NDQ',
-    quantity: 2
-  }
-]
+    quantity: 2,
+  },
+];
 
 function App() {
-  const [assets, setAssets] = useState(initialAssets)
-  const [graphIndex, setGraphIndex] = useState(-1)
-  const graphRef = useRef<HTMLDivElement>(null)
+  const [assets, setAssets] = useState(initialAssets);
+  const [graphIndex, setGraphIndex] = useState(-1);
+  const graphRef = useRef<HTMLDivElement>(null);
 
   function handleQuantityChange(index: number, newQuantity: number) {
-    const newAssets = [...assets]
-    newAssets[index].quantity = newQuantity
-    setAssets(newAssets)
+    const newAssets = [...assets];
+    newAssets[index].quantity = newQuantity;
+    setAssets(newAssets);
   }
 
   function handleDelete(symbol: string) {
-    setAssets((prev) => [...prev.filter(x => x.symbol !== symbol)])
+    setAssets((prev) => [...prev.filter((x) => x.symbol !== symbol)]);
   }
 
   function handleAdd(symbol: string) {
-    setAssets([...assets, {symbol: symbol, quantity: 1}])
+    setAssets([...assets, { symbol, quantity: 1 }]);
   }
 
   function changeGraph(index: number) {
-    setGraphIndex(index)
-    graphRef.current?.scrollIntoView({behavior: 'smooth'})
+    setGraphIndex(index);
+    graphRef.current?.scrollIntoView({ behavior: 'smooth' });
   }
 
-  let graphData
+  let graphData;
   if (graphIndex === -1) {
-    graphData = assets
+    graphData = assets;
   } else {
-    graphData = [assets[graphIndex]]
+    graphData = [assets[graphIndex]];
   }
-  
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -65,8 +67,8 @@ function App() {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Container maxWidth='lg' sx={{paddingBottom: 4}}>
-        <Stack gap={3} sx={{pt: 4}}>
+      <Container maxWidth="lg" sx={{ paddingBottom: 4 }}>
+        <Stack gap={3} sx={{ pt: 4 }}>
           <Stack gap={1}>
             <Typography variant="h5">
               Portfolio Composition
@@ -82,17 +84,17 @@ function App() {
           />
           <Stack gap={1}>
             <Typography variant="h5">
-              {graphIndex === -1 ? 'Portfolio Sector Breakdown' : assets[graphIndex].symbol} 
+              {graphIndex === -1 ? 'Portfolio Sector Breakdown' : assets[graphIndex].symbol}
             </Typography>
             <Divider />
           </Stack>
           <div ref={graphRef}>
-            <SectorWeightsPie assets={graphData}/>
+            <SectorWeightsPie assets={graphData} />
           </div>
         </Stack>
       </Container>
     </ThemeProvider>
-  )
+  );
 }
 
-export default App
+export default App;
