@@ -1,13 +1,15 @@
 from contextlib import asynccontextmanager
-from datetime import date
+from datetime import date, datetime
 
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
 
 from .database import create_db_and_tables, get_session, close_db
-from .models import Etf, EtfRead
+from .models import Etf, EtfRead, FailedRequest
 from .scraper import scrape_etf_data
+
+FAIL_MESSAGE = 'Data scraping failed for the requested ETF'
 
 
 @asynccontextmanager
@@ -36,19 +38,31 @@ app.add_middleware(
 
 @app.get('/etfs/{etf_symbol}', response_model=EtfRead)
 def get_etf_info(*, session: Session = Depends(get_session), etf_symbol: str):
-    etf = session.exec(select(Etf).where(Etf.etf_symbol == etf_symbol.upper())).first()
+    # Has scraping this symbol failed in the past
+    historic_fail = session.exec(select(FailedRequest).where(
+        FailedRequest.etf_symbol == etf_symbol.upper())).first()
+    if historic_fail:
+        raise HTTPException(
+            status_code=404, detail=FAIL_MESSAGE)
+
+    etf = session.exec(select(Etf).where(
+        Etf.etf_symbol == etf_symbol.upper())).first()
     if not etf or etf.date_updated.date() < date.today():
         try:
             newEtf = scrape_etf_data(etf_symbol)
         except:
+            fail = FailedRequest(date_attempted=datetime.now(),
+                                 etf_symbol=etf_symbol.upper())
+            session.add(fail)
+            session.commit()
             raise HTTPException(
-                status_code=404, detail='Data scraping failed for the requested ETF')
+                status_code=404, detail=FAIL_MESSAGE)
         if etf:
             for key, value in newEtf.model_dump(exclude_unset=True).items():
                 setattr(etf, key, value)
         else:
             etf = newEtf
-        
+
         session.add(etf)
         session.commit()
         session.refresh(etf)
