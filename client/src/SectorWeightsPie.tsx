@@ -1,7 +1,8 @@
 import { PieChart } from "@mui/x-charts"
-import { fetchEtf } from "./data"
+import { Portfolio, fetchEtf, portfolioSectorWeights } from "./data"
+import { allOrNothing } from "./util"
 import Color from "color"
-import { useQuery } from "@tanstack/react-query"
+import { useQueries } from "@tanstack/react-query"
 
 const baseColor = "#DF5648"
 const palette = new Array(11).fill(0).map((_, i) => {
@@ -9,12 +10,22 @@ const palette = new Array(11).fill(0).map((_, i) => {
 })
 
 interface SectorWeightsPieProps {
-  symbol: string
+  assets: Array<{symbol: string, quantity: number}>
 }
-export default function SectorWeightsPie({symbol}: SectorWeightsPieProps) {
-  const {data, error, isLoading} = useQuery({queryKey: ['etf', symbol], queryFn: () => fetchEtf(symbol)})
+export default function SectorWeightsPie({assets}: SectorWeightsPieProps) {
+  if (assets.length === 0) return "No data."
+  const queries = assets.map((asset) => {
+    return { queryKey: ['etf', asset.symbol], queryFn: () => fetchEtf(asset.symbol)}
+  })
+  const {data, isPending, error} = useQueries({queries: queries, combine: (results) => {
+    return {
+      data: allOrNothing(results.map(x => x.data)),
+      isPending: results.some(x => x.isPending),
+      error: results.some(x => x.error),
+    }
+  }})
 
-  if (isLoading) {
+  if (isPending) {
     return "Loading..."
   } else if (error) {
     return "Error."
@@ -22,7 +33,9 @@ export default function SectorWeightsPie({symbol}: SectorWeightsPieProps) {
     return
   }
 
-  const chartData = Object.entries(data.sectorWeights).map(([sectorName, weight], index) => {
+  const portfolio: Portfolio = data.map((asset, index) => ({etf: asset, quantity: assets[index].quantity}))
+  const portfolioWeights = portfolioSectorWeights(portfolio)
+  const chartData = Object.entries(portfolioWeights).map(([sectorName, weight], index) => {
     return {
       id: index,
       label: sectorName,

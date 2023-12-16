@@ -69,7 +69,7 @@ export default function PortfolioList({data, onQuantityChange, onDelete, onAdd, 
           )}}
         />
       </Paper>
-      <PortfolioSummary data={data}/>
+      <PortfolioSummary data={data} onGraph={() => onGraph(-1)}/>
     </Stack>
   )
 }

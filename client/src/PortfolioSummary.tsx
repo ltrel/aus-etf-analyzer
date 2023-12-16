@@ -6,8 +6,9 @@ import { fetchEtf } from "./data"
 
 export interface PortfolioSummaryProps {
   data: Array<{symbol: string, quantity: number}>
+  onGraph(): void
 }
-export default function PortfolioSummary({data}: PortfolioSummaryProps) {
+export default function PortfolioSummary({data, onGraph}: PortfolioSummaryProps) {
   const queries = data.map((asset) => {
     return { queryKey: ['etf', asset.symbol], queryFn: () => fetchEtf(asset.symbol)}
   })
@@ -44,7 +45,7 @@ export default function PortfolioSummary({data}: PortfolioSummaryProps) {
         <Typography sx={{fontWeight: 'bold'}}>Unique Symbols</Typography>
         <Typography>{uniqueSymbols}</Typography>
       </Stack>
-      <IconButton>
+      <IconButton onClick={onGraph}>
         <PieChart/>
       </IconButton>
     </Paper>

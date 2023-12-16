@@ -9,22 +9,24 @@ const darkTheme = createTheme({
   }
 })
 
+const initialAssets = [
+  {
+    symbol: 'VAS',
+    quantity: 11,
+  },
+  {
+    symbol: 'IHVV',
+    quantity: 3,
+  },
+  {
+    symbol: 'NDQ',
+    quantity: 2
+  }
+]
+
 function App() {
-  const [assets, setAssets] = useState([
-    {
-      symbol: 'VAS',
-      quantity: 11,
-    },
-    {
-      symbol: 'IHVV',
-      quantity: 3,
-    },
-    {
-      symbol: 'NDQ',
-      quantity: 2
-    }
-  ])
-  const [graphSymbol, setGraphSymbol] = useState("VAS")
+  const [assets, setAssets] = useState(initialAssets)
+  const [graphIndex, setGraphIndex] = useState(-1)
 
   function handleQuantityChange(index: number, newQuantity: number) {
     const newAssets = [...assets]
@@ -38,6 +40,13 @@ function App() {
 
   function handleAdd(symbol: string) {
     setAssets([...assets, {symbol: symbol, quantity: 1}])
+  }
+
+  let graphData
+  if (graphIndex === -1) {
+    graphData = assets
+  } else {
+    graphData = [assets[graphIndex]]
   }
   
   return (
@@ -63,15 +72,15 @@ function App() {
             onQuantityChange={handleQuantityChange}
             onDelete={handleDelete}
             onAdd={handleAdd}
-            onGraph={(index) => setGraphSymbol(assets[index].symbol)}
+            onGraph={setGraphIndex}
           />
           <Stack gap={1}>
             <Typography variant="h5">
-              {graphSymbol} 
+              {graphIndex === -1 ? 'Portfolio Sector Breakdown' : assets[graphIndex].symbol} 
             </Typography>
             <Divider />
           </Stack>
-          <SectorWeightsPie symbol={graphSymbol}/>
+          <SectorWeightsPie assets={graphData}/>
         </Stack>
       </Container>
     </ThemeProvider>
