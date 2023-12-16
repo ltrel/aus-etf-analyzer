@@ -13,7 +13,6 @@ interface SectorWeightsPieProps {
   assets: Array<{symbol: string, quantity: number}>
 }
 export default function SectorWeightsPie({assets}: SectorWeightsPieProps) {
-  if (assets.length === 0) return "No data."
   const queries = assets.map((asset) => {
     return { queryKey: ['etf', asset.symbol], queryFn: () => fetchEtf(asset.symbol)}
   })
@@ -24,6 +23,7 @@ export default function SectorWeightsPie({assets}: SectorWeightsPieProps) {
       error: results.some(x => x.error),
     }
   }})
+  if (assets.length === 0) return "No data."
 
   if (isPending) {
     return "Loading..."
