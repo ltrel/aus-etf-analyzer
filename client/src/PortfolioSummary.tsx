@@ -11,7 +11,10 @@ export interface PortfolioSummaryProps {
   onGraph(): void
 }
 export default function PortfolioSummary({ data, onGraph }: PortfolioSummaryProps) {
-  const queries = data.map((asset) => ({ queryKey: ['etf', asset.symbol], queryFn: () => fetchEtf(asset.symbol) }));
+  const queries = data.map((asset) => ({
+    queryKey: ['etf', asset.symbol],
+    queryFn: () => fetchEtf(asset.symbol),
+  }));
   const results = useQueries({ queries });
   const totalUnits = data.reduce((prev, asset) => prev + asset.quantity, 0);
   const uniqueSymbols = data.length;

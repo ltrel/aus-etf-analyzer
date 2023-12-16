@@ -6,7 +6,9 @@ import { allOrNothing } from './util';
 
 const baseColor = '#DF5648';
 const colorCount = 11;
-const palette = new Array(colorCount).fill(0).map((_, i) => Color(baseColor).rotate((360 / colorCount) * i).hex());
+const palette = new Array(colorCount).fill(0).map((_, i) => (
+  Color(baseColor).rotate((360 / colorCount) * i).hex()
+));
 
 interface SectorWeightsPieProps {
   assets: Array<{ symbol: string, quantity: number }>

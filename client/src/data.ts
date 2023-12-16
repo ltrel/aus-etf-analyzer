@@ -32,7 +32,8 @@ export interface PortfolioAsset {
 }
 export type Portfolio = Array<PortfolioAsset>;
 export function portfolioSectorWeights(portfolio: Portfolio): SectorWeights {
-  const totalValue = portfolio.reduce((acc, asset) => acc + asset.etf.marketPrice * asset.quantity, 0);
+  const totalValue = portfolio.reduce((acc, asset) => (
+    acc + asset.etf.marketPrice * asset.quantity), 0);
   const result: SectorWeights = {};
   portfolio.forEach((asset) => {
     const assetWeight = (asset.etf.marketPrice * asset.quantity) / totalValue;
