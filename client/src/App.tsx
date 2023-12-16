@@ -1,9 +1,11 @@
 import {
   AppBar, CssBaseline, ThemeProvider, Toolbar, Typography, Container, createTheme, Divider, Stack,
 } from '@mui/material';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import SectorWeightsPie from './SectorWeightsPie';
 import PortfolioList from './PortfolioList';
+import localforage from 'localforage';
+import { Assets, AssetsSchema } from './data';
 
 const darkTheme = createTheme({
   palette: {
@@ -27,9 +29,20 @@ const initialAssets = [
 ];
 
 function App() {
-  const [assets, setAssets] = useState(initialAssets);
+  const [assets, setAssets] = useState<Assets>([]);
   const [graphIndex, setGraphIndex] = useState(-1);
   const graphRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    localforage.getItem('assets').then((value) => {
+      const results = AssetsSchema.safeParse(value);
+      if (results.success) setAssets(results.data);
+      else setAssets(initialAssets);
+    })
+  }, [])
+  useEffect(() => {
+    localforage.setItem('assets', assets)
+  }, [assets])
 
   function handleQuantityChange(index: number, newQuantity: number) {
     setAssets((prev) => {

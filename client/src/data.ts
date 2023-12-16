@@ -22,9 +22,11 @@ export async function fetchEtf(key: string): Promise<EtfData> {
   return EtfDataSchema.parse(camelJson);
 }
 
-export function scaleWeights(factor: number, weights: SectorWeights): SectorWeights {
-  return Object.fromEntries(Object.entries(weights).map(([key, value]) => [key, factor * value]));
-}
+export const AssetsSchema = z.array(z.object({
+  symbol: z.string(),
+  quantity: z.number(),
+}));
+export type Assets = z.infer<typeof AssetsSchema>;
 
 export interface PortfolioAsset {
   etf: EtfData,
