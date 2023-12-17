@@ -1,8 +1,9 @@
 from contextlib import asynccontextmanager
 from datetime import date, datetime
+from typing import Annotated
 
 from aiohttp import ClientSession
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Path
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
 
@@ -41,7 +42,11 @@ app.add_middleware(
 
 
 @app.get('/etfs/{etf_symbol}', response_model=EtfRead)
-async def get_etf_info(*, session: Session = Depends(get_session), etf_symbol: str):
+async def get_etf_info(
+    *,
+    session: Session = Depends(get_session),
+    etf_symbol: Annotated[str, Path(pattern='^[a-zA-Z0-9]{3,6}$')]
+):
     # Has scraping this symbol failed in the past
     historic_fail = session.exec(select(FailedRequest).where(
         FailedRequest.etf_symbol == etf_symbol.upper())).first()
