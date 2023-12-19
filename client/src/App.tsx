@@ -106,6 +106,7 @@ function App() {
           <div ref={graphRef}>
             <SectorWeightsPie assets={graphData} />
           </div>
+          <Typography color='text.secondary'>&copy; Copyright 2023 L. Treloar</Typography>
         </Stack>
       </Container>
     </ThemeProvider>
