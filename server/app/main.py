@@ -11,6 +11,7 @@ from .database import create_db_and_tables, get_session, close_db
 from .models import Etf, EtfRead, FailedRequest
 from .scraper import scrape_etf_data
 from .httpsession import HttpSession
+from .settings import settings
 
 FAIL_MESSAGE = 'Data scraping failed for the requested ETF'
 
@@ -27,8 +28,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 origins = [
-    'http://localhost:5173',
-    'http://localhost:8000',
+    settings.cors_allowed_origin
 ]
 
 
