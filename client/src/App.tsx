@@ -78,7 +78,7 @@ function App() {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6">
-            ASX ETF Analyzer
+            AUS ETF Analyzer
           </Typography>
         </Toolbar>
       </AppBar>
