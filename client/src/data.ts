@@ -1,6 +1,8 @@
 import camelcaseKeys from 'camelcase-keys';
 import { z } from 'zod';
 
+const apiBaseUrl: string = import.meta.env.VITE_API_BASE_URL
+
 export const SectorWeightsSchema = z.record(z.string(), z.number());
 export type SectorWeights = z.infer<typeof SectorWeightsSchema>;
 
@@ -15,7 +17,7 @@ export const EtfDataSchema = z.object({
 export type EtfData = z.infer<typeof EtfDataSchema>;
 
 export async function fetchEtf(key: string): Promise<EtfData> {
-  const res = await fetch(`http://localhost:8000/etfs/${key}`);
+  const res = await fetch(apiBaseUrl + `/etfs/${key}`);
   const json = await res.json();
   const camelJson = camelcaseKeys(json);
 
