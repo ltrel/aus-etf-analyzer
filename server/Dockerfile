@@ -1,5 +1,5 @@
 # Generate requirements.txt in initial stage
-FROM python:3.11-alpine as requirements-stage
+FROM python:3.11-bookworm as requirements-stage
 
 ENV VIRTUAL_ENV=/poetry-venv
 RUN python3 -m venv $VIRTUAL_ENV
