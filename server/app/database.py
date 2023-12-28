@@ -1,6 +1,10 @@
 from sqlmodel import SQLModel, create_engine, Session
+from .settings import settings
 
-sqlite_url = f'sqlite:////data/database.db'
+DEVELOPMENT_PATH = 'sqlite:///database.db'
+PRODUCTION_PATH = 'sqlite:////database.db'
+
+sqlite_url = DEVELOPMENT_PATH if settings.server_mode == 'DEVELOPMENT' else PRODUCTION_PATH
 
 connect_args = {'check_same_thread': False}
 engine = create_engine(sqlite_url, echo=False, connect_args=connect_args)

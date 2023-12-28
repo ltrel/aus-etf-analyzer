@@ -7,10 +7,11 @@
     {
       "name": "Python: FastAPI",
       "type": "python",
+      "cwd": "${workspaceFolder}/server",
       "request": "launch",
       "module": "uvicorn",
       "args": [
-        "server.app.main:app",
+        "app.main:app",
         "--reload"
       ],
       "jinja": true,

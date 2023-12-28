@@ -2,7 +2,6 @@ from contextlib import asynccontextmanager
 from datetime import date, datetime
 from typing import Annotated
 
-from aiohttp import ClientSession
 from fastapi import FastAPI, Depends, HTTPException, Path
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
