@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
 
 from .database import create_db_and_tables, get_session, close_db
-from .models import Etf, EtfRead, FailedRequest
+from .models import Etf, EtfRead
 from .scraper import scrape_etf_data
 from .httpsession import HttpSession
 from .settings import settings
@@ -47,13 +47,6 @@ async def get_etf_info(
     session: Session = Depends(get_session),
     etf_symbol: Annotated[str, Path(pattern='^[a-zA-Z0-9]{3,6}$')]
 ):
-    # Has scraping this symbol failed in the past
-    historic_fail = session.exec(select(FailedRequest).where(
-        FailedRequest.etf_symbol == etf_symbol.upper())).first()
-    if historic_fail:
-        raise HTTPException(
-            status_code=404, detail=FAIL_MESSAGE)
-
     etf = session.exec(select(Etf).where(
         Etf.etf_symbol == etf_symbol.upper())).first()
     if not etf or etf.date_updated.date() < date.today():
